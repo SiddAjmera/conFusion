@@ -18,14 +18,15 @@
             ];
             this.getDishes = function(){ return $resource(baseURL + "dishes/:id", null, { 'update': { method: 'PUT' } }); };
             /*this.getDish = function(index) { return $resource.get(baseURL + "dishes/" + index ); };*/
-            this.getPromotion = function(){ return promotions[0]; };
+            //this.getPromotion = function(){ return promotions[0]; };
+            this.getPromotion = function(){ return $resource(baseURL + "promotions/:id"); }
         }])
 
-        .factory('corporateFactory', function() {
+        .factory('corporateFactory', ['$resource', 'baseURL', function($resource, baseURL) {
     
             var corpfac = {};
     
-            var leadership = [
+            /*var leadership = [
                 {
                     name: "Peter Pan",
                     image: 'images/alberto.png',
@@ -53,24 +54,29 @@
                     designation: "Executive Chef",
                     abbr: "EC",
                     description: "Award winning three-star Michelin chef with wide International experience having worked closely with whos-who in the culinary world, he specializes in creating mouthwatering Indo-Italian fusion experiences. He says, Put together the cuisines from the two craziest cultures, and you get a winning hit! Amma Mia!"
-                }
-                
-            ];
+                }  
+            ];*/
      
             // Implement two functions, one named getLeaders,
             // the other named getLeader(index)
             // Remember this is a factory not a service
 
-            corpfac.getLeaders = function(){
+            /*corpfac.getLeaders = function(){
               return leadership;
             };
 
             corpfac.getLeader = function(index){
               return leadership[index];
-            };
+            };*/
+
+            corpfac.getLeaders = function(){ return $resource(baseURL + "leadership/:id"); };
     
             return corpfac;
-        });
-
-
+        }])
+        
+        .factory('feedbackFactory', ['$resource', 'baseURL', function($resource, baseURL){
+            var feedbackFactoryObject = {};
+            feedbackFactoryObject.getFeedbacks = function(){ return $resource(baseURL + "feedback/:id", null, { 'query':  {method:'GET', isArray:true}, 'save': {method : 'POST'} }); };
+            return feedbackFactoryObject;
+        }]);
 }());

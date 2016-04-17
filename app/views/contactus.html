@@ -93,7 +93,7 @@
                         </label>
                     </div>
                     <div class="col-sm-3 col-sm-offset-1" ng-show="feedback.agree">
-                        <select class="form-control" ng-model="feedbackForm.mychannel" ng-options="channel.value as channel.label for channel in channels">
+                        <select class="form-control" ng-model="feedback.mychannel" ng-options="channel.value as channel.label for channel in channels">
                             <option value="">Tel. or Email?</option>
                         </select>
                         <span ng-show="invalidChannelSelection" class="help-block">Select an option.</span>

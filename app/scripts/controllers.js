@@ -50,16 +50,27 @@
             $scope.invalidChannelSelection = false;
         }])
 
-        .controller('FeedbackController', ['$scope', function($scope) {
+        .controller('FeedbackController', ['$scope', 'feedbackFactory', function($scope, feedbackFactory) {
             $scope.sendFeedback = function() {
+                console.log("$scope.feedback", $scope.feedback);
                 if ($scope.feedback.agree && ($scope.feedback.mychannel === "")) {
                     $scope.invalidChannelSelection = true;
                 }
                 else {
                     $scope.invalidChannelSelection = false;
-                    $scope.feedback = {mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
-                    $scope.feedback.mychannel="";
-                    $scope.feedbackForm.$setPristine();
+
+                    var feedbackArray = feedbackFactory.getFeedbacks().query(function(){
+                        console.log("feedbackArray before: ", feedbackArray);
+                        feedbackArray.push($scope.feedback);
+                        console.log("feedbackArray now: ", feedbackArray);
+                        feedbackFactory.getFeedbacks().save(feedbackArray, function(){
+                            $scope.feedback = { mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
+                            $scope.feedback.mychannel="";
+                            $scope.feedbackForm.$setPristine();
+                        });
+                    }, function(response){
+                        $scope.message = "Error: " + response.status + " " + response.statusText;
+                    });
                 }
             };
         }])
@@ -113,12 +124,29 @@
             }, function(response){
                 $scope.message = "Error: " + response.status + " " + response.statusText;
             });*/
-            $scope.featuredPromotion = menuFactory.getPromotion();
-            $scope.featuredLeader = corporateFactory.getLeader(3);
+            /*$scope.featuredPromotion = menuFactory.getPromotion();
+            $scope.featuredLeader = corporateFactory.getLeader(3);*/
+
+            menuFactory.getPromotion().get({id: 0})
+                .$promise.then(function(response){
+                    $scope.featuredPromotion = response;
+                }, function(response){
+                    $scope.message = "Error: " + response.status + " " + response.statusText;
+                });
+            corporateFactory.getLeaders().get({id: 3})
+                .$promise.then(function(response){
+                    $scope.featuredLeader = response;
+                }, function(response){
+                    $scope.message = "Error: " + response.status + " " + response.statusText;
+                });
         }])
 
         .controller('AboutController', ['$scope', 'corporateFactory', function($scope, corporateFactory){
-            $scope.leaders = corporateFactory.getLeaders();
+            /*$scope.leaders = corporateFactory.getLeaders();*/
+            corporateFactory.getLeaders().query(function(response){
+                $scope.leaders = response;
+            }, function(response){
+                $scope.message = "Error: " + response.status + " " + response.statusText;
+            });
         }]);
-
 }());
